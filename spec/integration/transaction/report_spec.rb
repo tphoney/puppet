@@ -651,61 +651,6 @@ describe Puppet::Transaction::Report do
         expect(report.corrective_change).to eq(false)
         expect(get_cc_count(report)).to eq(0)
       end
-
-      it "file failure should not return corrective_change" do
-        # Making the path a child path (with no parent) forces a failure
-        file = tmpfile("test_file") + "/foo"
-        report = run_catalogs(Puppet::Type.type(:file).new(:title => file,
-                                                           :content => "a"),
-                              Puppet::Type.type(:file).new(:title => file,
-                                                           :content => "b"),
-                              false, false)
-
-        expect(report.status).to eq("failed")
-
-        rs = report.resource_statuses["File[#{file}]"]
-        expect(rs.events.size).to eq(1)
-        expect(rs.events[0].corrective_change).to eq(false)
-        expect(rs.corrective_change).to eq(false)
-
-        expect(report.corrective_change).to eq(false)
-        expect(get_cc_count(report)).to eq(0)
-      end
-
-      it "file skipped with file change between runs will not show corrective_change" do
-        # Making the path a child path (with no parent) forces a failure
-        file = tmpfile("test_file") + "/foo"
-
-        resources1 = [
-          Puppet::Type.type(:file).new(:title => file,
-                                       :content => "a",
-                                       :notify => "Notify['foo']"),
-          Puppet::Type.type(:notify).new(:title => "foo")
-        ]
-        resources2 = [
-          Puppet::Type.type(:file).new(:title => file,
-                                       :content => "a",
-                                       :notify => "Notify[foo]"),
-          Puppet::Type.type(:notify).new(:title => "foo",
-                                         :message => "foo")
-        ]
-
-        report = run_catalogs(resources1, resources2, false, false)
-
-        expect(report.status).to eq("failed")
-
-        rs = report.resource_statuses["File[#{file}]"]
-        expect(rs.events.size).to eq(1)
-        expect(rs.events[0].corrective_change).to eq(false)
-        expect(rs.corrective_change).to eq(false)
-
-        rs = report.resource_statuses["Notify[foo]"]
-        expect(rs.events.size).to eq(0)
-        expect(rs.corrective_change).to eq(false)
-
-        expect(report.corrective_change).to eq(false)
-        expect(get_cc_count(report)).to eq(0)
-      end
     end
   end
 end
