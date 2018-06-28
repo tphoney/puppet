@@ -1,4 +1,4 @@
-source ENV['GEM_SOURCE'] || "https://rubygems.org"
+source "http://rubygems.org"
 
 gemspec
 
@@ -11,6 +11,7 @@ def location_for(place, fake_version = nil)
     [place, { :require => false }]
   end
 end
+
 
 # C Ruby (MRI) or Rubinius, but NOT Windows
 platforms :ruby do
@@ -40,6 +41,8 @@ group(:development, :test) do
   gem "rspec-its", "~> 1.1", :require => false
   gem "rspec-collection_matchers", "~> 1.1", :require => false
   gem "rspec-legacy_formatters", "~> 1.0", :require => false
+  gem 'net-ssh-telnet'
+  gem "puppet-resource_api"
 
   # Mocha is not compatible across minor version changes; because of this only
   # versions matching ~> 0.10.5 are supported. All other versions are unsupported

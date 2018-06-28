@@ -179,7 +179,7 @@ class Puppet::FileSystem::Uniquefile < DelegateClass(File)
     end
 
     def mkdir(*args)
-      FileUtils.makedirs(*args)
+      Dir.mkdir(*args)
     end
 
     def rmdir(*args)
